@@ -1,0 +1,1352 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anvil Office — Anvil Mobile Machining (Portfolio Demo)</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpolygon points='16,1 30,8.5 30,23.5 16,31 2,23.5 2,8.5' fill='%23ffcb05'/%3E%3Ctext x='16' y='22' font-family='Arial Black,Arial' font-size='16' font-weight='900' text-anchor='middle' fill='%2315171a'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   ANVIL OFFICE — single-file app for a mobile heavy-equipment machining shop
+   Steel + hi-vis industrial theme. Portfolio demo — "Anvil Mobile Machining" and
+   all customers/jobs/transactions below are fictional synthetic data.
+   Built by DataMind Consulting. Adapted from a real client deliverable; every
+   name, contact, address, serial number, invoice number, and dollar figure has
+   been replaced with invented demo data.
+   ============================================================ */
+:root{
+  --steel-900:#15171a; --steel-850:#191c20; --steel-800:#1d2024; --steel-700:#2a2e34;
+  --steel-600:#3a3f47; --steel-400:#6b7280; --steel-300:#9aa1ab;
+  --paper:#f4f3ef; --hi-vis:#ffcb05; --hi-vis-dk:#e0ac00;
+  --line:rgba(255,255,255,.10); --line-strong:rgba(255,255,255,.18);
+  --ok:#58c98a; --bad:#ff7a5c; --warn:#ffb020;
+  --disp:'Oswald','Bahnschrift SemiBold Condensed','Bahnschrift','Arial Narrow',sans-serif;
+  --body:'Barlow','Segoe UI',system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px}
+body{font-family:var(--body);background:var(--steel-900);color:var(--paper);line-height:1.5;
+  background-image:radial-gradient(1200px 500px at 80% -10%, rgba(255,203,5,.05), transparent 60%),
+    repeating-linear-gradient(0deg, transparent 0 3px, rgba(255,255,255,.012) 3px 4px)}
+h1,h2,h3,h4,.disp{font-family:var(--disp);text-transform:uppercase;letter-spacing:.02em;line-height:1.08;font-weight:600}
+a{color:inherit}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:var(--body);font-size:1.02rem;color:var(--paper);
+  background:var(--steel-900);border:1.5px solid var(--steel-600);border-radius:4px;padding:11px 12px;width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--hi-vis);outline-offset:1px;border-color:var(--hi-vis)}
+select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--steel-300) 50%),linear-gradient(135deg,var(--steel-300) 50%,transparent 50%);
+  background-position:calc(100% - 18px) 55%,calc(100% - 13px) 55%;background-size:5px 5px;background-repeat:no-repeat;padding-right:34px}
+textarea{min-height:84px;resize:vertical}
+label{display:block;font-family:var(--disp);text-transform:uppercase;font-size:.78rem;letter-spacing:.14em;color:var(--steel-300);margin:0 0 6px}
+::placeholder{color:var(--steel-400)}
+
+.hazard{height:8px;width:100%;flex:none;
+  background:repeating-linear-gradient(45deg,var(--hi-vis) 0 22px,var(--steel-900) 22px 44px)}
+
+/* ---------- header ---------- */
+.topbar{display:flex;align-items:center;gap:16px;padding:14px 22px;background:var(--steel-850);
+  border-bottom:1px solid var(--line);flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;font-family:var(--disp);font-weight:700;font-size:1.12rem;
+  text-transform:uppercase;letter-spacing:.04em;line-height:1.1}
+.brand .mark{width:40px;height:40px;background:var(--hi-vis);color:var(--steel-900);flex:none;
+  display:grid;place-items:center;font-weight:700;font-size:1.25rem;
+  clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+.brand small{display:block;font-family:var(--body);font-weight:600;font-size:.6rem;letter-spacing:.26em;color:var(--hi-vis)}
+.topbar .spacer{flex:1}
+.top-owed{text-align:right;font-family:var(--disp);text-transform:uppercase;letter-spacing:.06em;font-size:.8rem;color:var(--steel-300)}
+.top-owed b{display:block;font-size:1.35rem;color:var(--hi-vis);letter-spacing:.02em}
+
+/* ---------- nav tabs ---------- */
+nav.tabs{display:flex;gap:2px;background:var(--steel-850);padding:0 14px;border-bottom:1px solid var(--line-strong);overflow-x:auto}
+nav.tabs button{background:none;border:none;color:var(--steel-300);font-family:var(--disp);text-transform:uppercase;
+  letter-spacing:.05em;font-size:1.02rem;font-weight:600;padding:16px 20px 13px;border-bottom:3px solid transparent;
+  display:flex;align-items:center;gap:9px;white-space:nowrap;min-height:56px}
+nav.tabs button svg{width:19px;height:19px;flex:none}
+nav.tabs button:hover{color:var(--paper)}
+nav.tabs button.on{color:var(--paper);border-bottom-color:var(--hi-vis)}
+nav.tabs button .bdg{background:var(--bad);color:#fff;font-family:var(--body);font-weight:700;font-size:.72rem;
+  min-width:20px;height:20px;border-radius:10px;display:grid;place-items:center;padding:0 6px}
+
+main{max-width:1180px;margin:0 auto;padding:26px 22px 90px}
+
+/* ---------- generic ---------- */
+.eyebrow{display:inline-flex;align-items:center;gap:10px;color:var(--hi-vis);font-family:var(--disp);
+  text-transform:uppercase;letter-spacing:.24em;font-size:.74rem}
+.eyebrow::before{content:'';width:30px;height:2px;background:var(--hi-vis)}
+.panel{background:var(--steel-800);border:1px solid var(--line);padding:22px;position:relative}
+.panel.accent{border-top:3px solid var(--hi-vis)}
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.right{margin-left:auto}
+.muted{color:var(--steel-300)}.small{font-size:.9rem}
+.big-num{font-family:var(--disp);font-weight:700;font-size:2.1rem;letter-spacing:.01em;line-height:1}
+.pos{color:var(--ok)}.neg{color:var(--bad)}.hv{color:var(--hi-vis)}
+hr.sep{border:none;border-top:1px solid var(--line);margin:16px 0}
+
+.btn{background:var(--hi-vis);color:var(--steel-900);border:none;padding:14px 22px;font-family:var(--disp);
+  text-transform:uppercase;font-weight:700;letter-spacing:.05em;font-size:1rem;display:inline-flex;align-items:center;gap:10px;
+  clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px);transition:.15s;min-height:48px}
+.btn:hover{background:#fff}
+.btn.ghost{background:transparent;color:var(--paper);border:1.5px solid var(--steel-600);clip-path:none}
+.btn.ghost:hover{border-color:var(--hi-vis);color:var(--hi-vis);background:transparent}
+.btn.danger{background:transparent;color:var(--bad);border:1.5px solid var(--bad);clip-path:none}
+.btn.danger:hover{background:var(--bad);color:#fff}
+.btn.sm{padding:8px 14px;font-size:.86rem;min-height:38px}
+.btn svg{width:18px;height:18px}
+.iconbtn{background:none;border:none;color:var(--steel-300);padding:8px;border-radius:4px;display:inline-grid;place-items:center}
+.iconbtn:hover{color:var(--paper);background:var(--steel-700)}
+.iconbtn.del:hover{color:var(--bad)}
+.iconbtn svg{width:18px;height:18px}
+
+/* ---------- chips / status ---------- */
+.chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--disp);text-transform:uppercase;
+  font-size:.72rem;letter-spacing:.1em;font-weight:600;padding:4px 10px;border:1px solid var(--steel-600);color:var(--steel-300);white-space:nowrap}
+.chip.estimate{color:var(--steel-300)}
+.chip.progress{color:#7db8ff;border-color:#33507a}
+.chip.invoiced{color:var(--hi-vis);border-color:var(--hi-vis-dk)}
+.chip.paid{color:var(--ok);border-color:#2a6b48}
+.chip.overdue{color:#fff;background:var(--bad);border-color:var(--bad)}
+.chip.cat{font-family:var(--body);letter-spacing:.03em;font-weight:600;text-transform:none;font-size:.8rem}
+.chip.personal{color:#d8a0ff;border-color:#7a4d9e}
+
+/* ---------- tables ---------- */
+table.tbl{width:100%;border-collapse:collapse;font-size:1rem}
+.tbl th{font-family:var(--disp);text-transform:uppercase;letter-spacing:.1em;font-size:.74rem;color:var(--steel-300);
+  text-align:left;padding:10px 12px;border-bottom:1px solid var(--line-strong)}
+.tbl td{padding:13px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl tr.click{cursor:pointer}
+.tbl tr.click:hover td{background:var(--steel-700)}
+.tbl .r{text-align:right}
+.tbl td.money{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.plate{display:inline-block;background:var(--hi-vis);color:var(--steel-900);font-family:var(--disp);font-weight:700;
+  padding:3px 9px;letter-spacing:.04em;font-size:.95rem;clip-path:polygon(5px 0,100% 0,100% calc(100% - 5px),calc(100% - 5px) 100%,0 100%,0 5px)}
+
+/* ---------- customer cards ---------- */
+.cust-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
+.cust{background:var(--steel-800);border:1px solid var(--line);padding:20px;display:flex;flex-direction:column;gap:10px;
+  border-left:3px solid var(--hi-vis)}
+.cust h3{font-size:1.3rem}
+.cust .contactline{display:flex;gap:10px;align-items:center;font-size:1.02rem}
+.cust .contactline svg{width:17px;height:17px;color:var(--hi-vis);flex:none}
+.cust .machines{display:flex;flex-direction:column;gap:6px;margin-top:2px}
+.mach{display:flex;gap:8px;align-items:baseline;font-size:.92rem;color:var(--steel-300);border:1px dashed var(--steel-600);padding:6px 10px}
+.mach b{color:var(--paper);font-weight:600}
+.cust .foot{display:flex;gap:10px;margin-top:auto;padding-top:10px}
+
+/* ---------- dashboard ---------- */
+.statcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:14px}
+.stat{background:var(--steel-800);border:1px solid var(--line);padding:18px 20px 16px;border-top:3px solid var(--steel-600)}
+.stat.y{border-top-color:var(--hi-vis)}.stat.g{border-top-color:var(--ok)}.stat.r{border-top-color:var(--bad)}
+.stat .lbl{font-family:var(--disp);text-transform:uppercase;letter-spacing:.14em;font-size:.72rem;color:var(--steel-300);margin-bottom:8px}
+.quick{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.quick button{background:var(--steel-800);border:1px solid var(--steel-600);color:var(--paper);padding:20px 16px;
+  font-family:var(--disp);text-transform:uppercase;letter-spacing:.05em;font-weight:600;font-size:1.04rem;
+  display:flex;flex-direction:column;align-items:center;gap:10px;transition:.15s;min-height:96px}
+.quick button svg{width:28px;height:28px;color:var(--hi-vis)}
+.quick button:hover{border-color:var(--hi-vis);background:var(--steel-700);transform:translateY(-2px)}
+.owedlist .tbl td{padding:11px 12px}
+.bars{display:flex;gap:14px;align-items:flex-end;height:120px;padding-top:8px}
+.bargrp{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.bargrp .pair{display:flex;gap:4px;align-items:flex-end;height:92px}
+.bargrp .b{width:16px;background:var(--ok)}
+.bargrp .b.out{background:var(--bad)}
+.bargrp .m{font-size:.72rem;color:var(--steel-300);font-family:var(--disp);text-transform:uppercase;letter-spacing:.08em}
+.banner{background:var(--steel-800);border:1px solid var(--hi-vis-dk);border-left:6px solid var(--hi-vis);padding:14px 18px;
+  display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.banner b{font-family:var(--disp);text-transform:uppercase;letter-spacing:.06em}
+
+/* ---------- modal ---------- */
+#modal-root{position:fixed;inset:0;display:none;z-index:100}
+#modal-root.open{display:block}
+.modal-back{position:absolute;inset:0;background:rgba(10,11,13,.78);backdrop-filter:blur(3px)}
+.modal{position:relative;max-width:860px;margin:4vh auto;background:var(--steel-800);border:1px solid var(--line-strong);
+  max-height:92vh;display:flex;flex-direction:column;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.modal.narrow{max-width:560px}
+.modal>.hazard{height:6px}
+.modal .mhead{display:flex;align-items:center;gap:14px;padding:18px 24px;border-bottom:1px solid var(--line)}
+.modal .mhead h2{font-size:1.4rem}
+.modal .mbody{padding:22px 24px;overflow-y:auto}
+.modal .mfoot{display:flex;gap:12px;padding:16px 24px;border-top:1px solid var(--line);flex-wrap:wrap}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.frow{margin-bottom:14px}
+.linerow{display:grid;grid-template-columns:150px 1fr 84px 84px 110px 40px;gap:8px;align-items:center;margin-bottom:8px}
+.taskrow{display:grid;grid-template-columns:44px 1fr 40px;gap:8px;align-items:center;margin-bottom:8px}
+.taskrow .tno{font-family:var(--disp);color:var(--hi-vis);font-weight:600;text-align:center}
+.machrow{display:grid;grid-template-columns:1fr 1fr 1fr 40px;gap:8px;margin-bottom:8px}
+.totline{display:flex;justify-content:flex-end;gap:26px;font-size:1.05rem;padding:4px 48px 4px 0}
+.totline b{min-width:110px;text-align:right;font-variant-numeric:tabular-nums}
+.totline.grand{font-family:var(--disp);text-transform:uppercase;font-size:1.2rem;color:var(--hi-vis)}
+
+/* ---------- import preview ---------- */
+.imp-row-off td{opacity:.38}
+.imp-reason{font-size:.78rem;color:var(--warn)}
+.dupe{color:var(--steel-400);font-size:.78rem}
+
+/* ---------- toast ---------- */
+#toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--hi-vis);color:var(--steel-900);
+  font-family:var(--disp);text-transform:uppercase;font-weight:700;letter-spacing:.05em;padding:13px 26px;opacity:0;
+  pointer-events:none;transition:.25s;z-index:200;clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.empty{text-align:center;padding:60px 20px;color:var(--steel-300)}
+.empty svg{width:54px;height:54px;color:var(--steel-600);margin-bottom:14px}
+.empty h3{color:var(--paper);margin-bottom:8px;font-size:1.3rem}
+
+/* ---------- print document ---------- */
+#print-root{display:none}
+@media print{
+  body{background:#fff}
+  .app-chrome, .hazard.top, #toast, #modal-root{display:none !important}
+  #print-root{display:block}
+  @page{margin:14mm 14mm 16mm}
+}
+.inv{font-family:var(--body);color:#191c20;background:#fff;font-size:10.6pt;line-height:1.45}
+.inv .inv-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4mm}
+.inv h1{font-family:var(--disp);font-size:26pt;letter-spacing:.04em;color:#15171a}
+.inv h1::after{content:'';display:block;width:34mm;height:2.2mm;background:var(--hi-vis);margin-top:1.4mm}
+.inv .meta{text-align:right;font-size:10.5pt}
+.inv .meta b{display:inline-block;min-width:24mm;text-align:left;font-family:var(--disp);text-transform:uppercase;font-size:8.6pt;letter-spacing:.08em;color:#555}
+.inv .parties{display:flex;justify-content:space-between;gap:10mm;margin:5mm 0 6mm}
+.inv .party{font-size:10.4pt}
+.inv .party .pname{font-family:var(--disp);font-weight:600;font-size:12pt;text-transform:uppercase}
+.inv .party .plabel{font-family:var(--disp);text-transform:uppercase;font-size:8.4pt;letter-spacing:.14em;color:#777;margin-bottom:1.6mm}
+.inv .sechead{font-family:var(--disp);text-transform:uppercase;font-size:10pt;letter-spacing:.1em;background:#15171a;color:#fff;
+  padding:1.8mm 3mm;margin:5mm 0 2.4mm;display:flex;align-items:center;gap:3mm}
+.inv .sechead::before{content:'';width:3.2mm;height:3.2mm;background:var(--hi-vis)}
+.inv p.desc{margin:1mm 0;white-space:pre-line}
+.inv table{width:100%;border-collapse:collapse;font-size:10.2pt}
+.inv th{font-family:var(--disp);text-transform:uppercase;font-size:8.4pt;letter-spacing:.1em;color:#555;text-align:left;
+  border-bottom:1.6px solid #15171a;padding:1.6mm 2mm}
+.inv td{padding:1.9mm 2mm;border-bottom:.5px solid #ccc;vertical-align:top}
+.inv td.r,.inv th.r{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.inv .tasknum{font-family:var(--disp);color:#111;font-weight:600}
+.inv .totals{margin-top:3mm;margin-left:auto;width:62mm}
+.inv .totals .trow{display:flex;justify-content:space-between;padding:1.2mm 2mm;font-size:10.6pt}
+.inv .totals .trow.grand{font-family:var(--disp);text-transform:uppercase;font-weight:700;font-size:12.5pt;
+  border-top:2px solid #15171a;background:var(--hi-vis);margin-top:1mm}
+.inv .terms{margin-top:6mm;font-size:9.6pt}
+.inv .terms ol{margin:1.6mm 0 0 5mm}
+.inv .terms li{margin-bottom:1mm}
+.inv .inv-foot{margin-top:8mm;text-align:center;font-family:var(--disp);text-transform:uppercase;letter-spacing:.18em;font-size:8.6pt;color:#666}
+.inv .footstripe{height:2.6mm;margin-top:2mm;background:repeating-linear-gradient(45deg,var(--hi-vis) 0 5mm,#15171a 5mm 10mm)}
+
+@media (max-width:760px){
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .linerow{grid-template-columns:110px 1fr 64px 64px 88px 34px;font-size:.9rem}
+  main{padding:18px 12px 80px}
+  .topbar{padding:12px 14px}
+  .modal{margin:0;max-height:100vh;height:100%}
+}
+</style>
+</head>
+<body>
+<div class="app-chrome">
+  <div class="hazard top"></div>
+  <header class="topbar">
+    <div class="brand">
+      <div class="mark">A</div>
+      <div>Anvil Mobile Machining<small>Anvil Office · Demo</small></div>
+    </div>
+    <div class="spacer"></div>
+    <div class="top-owed">Owed to you<b id="top-owed">$0</b></div>
+  </header>
+  <nav class="tabs" id="tabs">
+    <button data-v="home" onclick="A.show('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+      Home</button>
+    <button data-v="customers" onclick="A.show('customers')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.4 3.4-5 6.5-5s5.7 1.6 6.5 5"/><circle cx="17.5" cy="9.5" r="2.5"/><path d="M16 15.2c2.6.2 4.6 1.6 5.3 4.3"/></svg>
+      Customers</button>
+    <button data-v="jobs" onclick="A.show('jobs')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 3h10l2 4v14H5V7z"/><path d="M7 3v4h10V3"/><path d="M9 12h6M9 16h6"/></svg>
+      Jobs &amp; Invoices <span class="bdg" id="badge-overdue" style="display:none"></span></button>
+    <button data-v="money" onclick="A.show('money')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="13" rx="1.5"/><circle cx="12" cy="12.5" r="3"/><path d="M2 10h3M19 15h3"/></svg>
+      Money</button>
+    <button data-v="settings" onclick="A.show('settings')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.2 2.2M16.9 16.9l2.2 2.2M19.1 4.9l-2.2 2.2M7.1 16.9l-2.2 2.2"/></svg>
+      Settings</button>
+  </nav>
+  <main id="main"></main>
+</div>
+
+<div id="modal-root"></div>
+<div id="toast"></div>
+<div id="print-root"></div>
+<input type="file" id="file-csv" accept=".csv,text/csv" style="display:none">
+<input type="file" id="file-restore" accept=".json,application/json" style="display:none">
+<script>
+'use strict';
+/* ================= ANVIL OFFICE — core ================= */
+const KEY = 'anvil-office-v1';
+const CATS = ['Parts & Materials','Welding Gas & Supplies','Consumables','Tools & Equipment','Shop Supplies',
+  'Fuel','Vehicle & Travel','Shipping & Postage','Software & Office','Insurance','Loan & Lease Payments',
+  'Bank & Card Fees','Meals','Advertising','Subcontractors','Other','Personal'];
+const LINE_ITEMS = ['Labor','Travel','Parts','Materials','Hardware','Consumables','Other'];
+const STATUSES = { estimate:'Estimate', progress:'In progress', invoiced:'Invoiced', paid:'Paid' };
+
+const SEED = {
+  settings:{
+    business:{ name:'Anvil Mobile Machining', addr1:'PO Box 123', addr2:'Anytown, ST 00000',
+      phone:'555-555-0142', email:'dispatch@anvil.example' },
+    defaultRate:175, defaultTermsDays:15, lastBackup:null, welcomed:false
+  },
+  customers:[
+    { id:'c1', seed:true, company:'Meridian Concrete & Construction', contact:'Dana Ruiz', phone:'555-555-0114',
+      email:'dana@meridian.example', address:'4410 Quarry Ridge Rd\nSpringfield, ST 00000', termsDays:15, notes:'',
+      machines:[{make:'Acme', model:'EX-220', serial:'DEMO-10021'}] },
+    { id:'c2', seed:true, company:'Redstone Aggregates', contact:'Tomas Vega', phone:'555-555-0176',
+      email:'tomas@redstone.example', address:'118 Quarry Loop\nFairview, ST 00000', termsDays:15, notes:'',
+      machines:[{make:'Acme', model:'EX-240', serial:'DEMO-20044'}] },
+    { id:'c3', seed:true, company:'Continental Fleet Services', contact:'Priya Anand', phone:'555-555-0199',
+      email:'priya@continentalfleet.example', address:'900 Depot Ave\nCenterville, ST 00000', termsDays:30, notes:'',
+      machines:[{make:'Acme', model:'WL-580 Wheel Loader', serial:'DEMO-30078'}] }
+  ],
+  jobs:[
+    { id:'j1', seed:true, invoiceNo:'2601.01', po:'PO-77410', customerId:'c3', date:'2026-01-14',
+      status:'invoiced', termsDays:30,
+      problem:'Customer requests line boring on Acme WL-580 s/n DEMO-30078 Wheel Loader end of loader arm bores.',
+      location:'Work performed at customer yard, Centerville.',
+      tasks:[
+        'Anvil returned end of loader arm bores to manufacturer specs using welding and line boring.',
+        'Anvil validated new bushing sizes and pin tolerance.',
+        'Anvil installed customer provided bushings.',
+        'Anvil coated work surfaces with primer to prevent surface rust.',
+        "Customer is responsible for machine reassembly after completion of Anvil's work."],
+      lines:[
+        {item:'Labor', desc:"Research into technical specifications on the customer's equipment, part tolerances, and parts availability.", hours:1, rate:175, amount:175},
+        {item:'Labor', desc:'Line boring of loader arm bores and installation of selected new parts', hours:12, rate:175, amount:2100},
+        {item:'Travel', desc:'Travel to and from machine location', hours:3, rate:175, amount:525},
+        {item:'Consumables', desc:'Cost of actual cutting, grinding, and welding items consumed', hours:null, rate:null, amount:650}],
+      payments:[] },
+    { id:'j2', seed:true, invoiceNo:'2601.05', po:'', customerId:'c1', date:'2026-01-22',
+      status:'invoiced', termsDays:15,
+      problem:'Customer states Acme EX-220 s/n DEMO-10021 has a crack in the shoulder of the grapple that requires repair.',
+      location:'Work performed at job site, Springfield.',
+      tasks:[
+        'Removal of grapple from machine was not necessary.',
+        'Anvil removed damaged material using carbon arc gouging.',
+        'Anvil filled cracks by heating and welding as appropriate.',
+        'Anvil coated work surfaces with primer to prevent surface rust.'],
+      lines:[
+        {item:'Labor', desc:"Research into technical specifications on the customer's equipment, part tolerances, and parts availability.", hours:null, rate:165, amount:0},
+        {item:'Labor', desc:'Repair of grapple shoulder crack', hours:4, rate:165, amount:660},
+        {item:'Consumables', desc:'Cost of actual grinding and welding items consumed', hours:null, rate:null, amount:180}],
+      payments:[] },
+    { id:'j3', seed:true, invoiceNo:'2602.03', po:'Bucket-Wear', customerId:'c2', date:'2026-02-06',
+      status:'invoiced', termsDays:15,
+      problem:'Customer states Acme EX-240 s/n DEMO-20044 spare bucket requires wear bars and side cutters.',
+      location:'Work performed at quarry yard, Fairview.',
+      tasks:[
+        'Anvil fabricated wear bars from customer provided materials.',
+        'Anvil processed customer wear-plate material into wear bars using track torch.',
+        'Anvil installed side cutter wear bars using heating and welding.',
+        'Anvil installed wear plate around shanks using heating and welding.',
+        'Anvil coated all work surfaces with paint to prevent surface rust.',
+        "Customer is responsible for machine reassembly after completion of Anvil's work."],
+      lines:[
+        {item:'Labor', desc:'Fabrication and installation of wear package (flat rate)', hours:null, rate:null, amount:1850}],
+      payments:[] }
+  ],
+  money:[
+    {id:'m1', seed:true, date:'2026-01-05', kind:'income', vendor:'Continental Fleet Services', desc:'EDI payment (earlier invoice)', amount:6100.00, category:'', personal:false, jobId:null, source:'bank-csv', hash:'2026-01-05|6100|Continental EDI'},
+    {id:'m2', seed:true, date:'2026-01-19', kind:'income', vendor:'Redstone Aggregates', desc:'Check deposit', amount:975.00, category:'', personal:false, jobId:null, source:'bank-csv', hash:'2026-01-19|975|Redstone check'},
+    {id:'m3', seed:true, date:'2026-01-06', kind:'expense', vendor:'AutoZone Commercial', desc:'Anytown, ST', amount:412.55, category:'Parts & Materials', personal:false, jobId:null, source:'cc-csv', hash:'2026-01-06|412.55|AUTOZONE'},
+    {id:'m4', seed:true, date:'2026-01-06', kind:'expense', vendor:'Valley Diesel Services', desc:'Fairview, ST', amount:65.00, category:'Other', personal:false, jobId:null, source:'cc-csv', hash:'2026-01-06|65|VALLEYDIESEL'},
+    {id:'m5', seed:true, date:'2026-01-10', kind:'expense', vendor:'Summit Hydraulics', desc:'Hose & fittings', amount:610.40, category:'Parts & Materials', personal:false, jobId:null, source:'cc-csv', hash:'2026-01-10|610.4|SUMMITHYD'},
+    {id:'m6', seed:true, date:'2026-01-10', kind:'expense', vendor:'QuickBooks', desc:'Software subscription', amount:90.00, category:'Software & Office', personal:false, jobId:null, source:'cc-csv', hash:'2026-01-10|90|QUICKBOOKS'},
+    {id:'m7', seed:true, date:'2026-01-11', kind:'expense', vendor:'Hilltop Tool Supply', desc:'', amount:215.60, category:'Tools & Equipment', personal:false, jobId:null, source:'cc-csv', hash:'2026-01-11|215.6|HILLTOPTOOL'},
+    {id:'m8', seed:true, date:'2026-01-11', kind:'expense', vendor:'Grainger', desc:'', amount:88.30, category:'Tools & Equipment', personal:false, jobId:null, source:'cc-csv', hash:'2026-01-11|88.3|GRAINGER'},
+    {id:'m9', seed:true, date:'2026-01-12', kind:'expense', vendor:'AutoZone Commercial', desc:'Refund', amount:-40.00, category:'Parts & Materials', personal:false, jobId:null, source:'cc-csv', hash:'2026-01-12|-40|AUTOZONE'},
+    {id:'m10', seed:true, date:'2026-01-13', kind:'expense', vendor:'Anytown Federal Bank', desc:'Equipment loan payment', amount:1150.00, category:'Loan & Lease Payments', personal:false, jobId:null, source:'bank-csv', hash:'2026-01-13|1150|Bank loan'},
+    {id:'m11', seed:true, date:'2026-01-16', kind:'expense', vendor:'Lowes', desc:'Anytown, ST', amount:164.20, category:'Shop Supplies', personal:false, jobId:null, source:'cc-csv', hash:'2026-01-16|164.2|LOWES'},
+    {id:'m12', seed:true, date:'2026-01-16', kind:'expense', vendor:'Amazon', desc:'', amount:298.75, category:'Shop Supplies', personal:false, jobId:null, source:'cc-csv', hash:'2026-01-16|298.75|AMAZON'},
+    {id:'m13', seed:true, date:'2026-01-17', kind:'expense', vendor:'Riverside Florist', desc:'', amount:48.00, category:'Personal', personal:true, jobId:null, source:'cc-csv', hash:'2026-01-17|48|FLORIST'},
+    {id:'m14', seed:true, date:'2026-01-17', kind:'expense', vendor:'Trailhead Diner', desc:'Personal meal', amount:29.40, category:'Personal', personal:true, jobId:null, source:'cc-csv', hash:'2026-01-17|29.4|TRAILHEAD'},
+    {id:'m15', seed:true, date:'2026-01-18', kind:'expense', vendor:'Target', desc:'Personal', amount:36.15, category:'Personal', personal:true, jobId:null, source:'cc-csv', hash:'2026-01-18|36.15|TARGET'},
+    {id:'m16', seed:true, date:'2026-01-20', kind:'expense', vendor:'Summit Machinery', desc:'Anytown, ST', amount:540.10, category:'Parts & Materials', personal:false, jobId:null, source:'cc-csv', hash:'2026-01-20|540.1|SUMMITMACH'},
+    {id:'m17', seed:true, date:'2026-01-20', kind:'expense', vendor:'Acme Parts Direct', desc:'Parts order', amount:890.25, category:'Parts & Materials', personal:false, jobId:null, source:'cc-csv', hash:'2026-01-20|890.25|ACMEPARTS'},
+    {id:'m18', seed:true, date:'2026-01-20', kind:'expense', vendor:'Home Depot', desc:'Anytown, ST', amount:70.35, category:'Shop Supplies', personal:false, jobId:null, source:'cc-csv', hash:'2026-01-20|70.35|HOMEDEPOT'},
+    {id:'m19', seed:true, date:'2026-01-23', kind:'expense', vendor:'UPS', desc:'Shipping', amount:120.60, category:'Shipping & Postage', personal:false, jobId:null, source:'cc-csv', hash:'2026-01-23|120.6|UPS'},
+    {id:'m20', seed:true, date:'2026-01-23', kind:'expense', vendor:'Roadside Grill', desc:'Job travel meal', amount:18.75, category:'Meals', personal:false, jobId:null, source:'cc-csv', hash:'2026-01-23|18.75|ROADSIDEGRILL'},
+    {id:'m21', seed:true, date:'2026-01-24', kind:'expense', vendor:'Anytown Truck Wash', desc:'Truck', amount:85.00, category:'Vehicle & Travel', personal:false, jobId:null, source:'cc-csv', hash:'2026-01-24|85|TRUCKWASH'},
+    {id:'m22', seed:true, date:'2026-01-27', kind:'expense', vendor:'ShopSupplyCo.com', desc:'', amount:210.90, category:'Other', personal:false, jobId:null, source:'cc-csv', hash:'2026-01-27|210.9|SHOPSUPPLYCO'},
+    {id:'m23', seed:true, date:'2026-01-27', kind:'expense', vendor:'Summit Welding Gas', desc:'Welding gas & supplies', amount:1980.45, category:'Welding Gas & Supplies', personal:false, jobId:null, source:'cc-csv', hash:'2026-01-27|1980.45|SUMMITGAS'},
+    {id:'m24', seed:true, date:'2026-01-30', kind:'expense', vendor:'Card fee', desc:'Overlimit fee', amount:29.00, category:'Bank & Card Fees', personal:false, jobId:null, source:'cc-csv', hash:'2026-01-30|29|OVERLIMIT'},
+    {id:'m25', seed:true, date:'2026-01-30', kind:'expense', vendor:'Card interest', desc:'Interest charge on purchases', amount:210.60, category:'Bank & Card Fees', personal:false, jobId:null, source:'cc-csv', hash:'2026-01-30|210.6|INTEREST'},
+    {id:'m26', seed:true, date:'2026-01-30', kind:'expense', vendor:'Summit Machinery', desc:'Anytown, ST', amount:615.80, category:'Parts & Materials', personal:false, jobId:null, source:'cc-csv', hash:'2026-01-30|615.8|SUMMITMACH'},
+    {id:'m27', seed:true, date:'2026-02-02', kind:'expense', vendor:'Precision Boring Supply', desc:'Line boring tooling', amount:1795.00, category:'Tools & Equipment', personal:false, jobId:null, source:'cc-csv', hash:'2026-02-02|1795|PRECISIONBORING'},
+    {id:'m28', seed:true, date:'2026-02-02', kind:'expense', vendor:'Northern Tool', desc:'', amount:24.99, category:'Tools & Equipment', personal:false, jobId:null, source:'cc-csv', hash:'2026-02-02|24.99|NORTHERNTOOL1'},
+    {id:'m29', seed:true, date:'2026-02-02', kind:'expense', vendor:'Northern Tool', desc:'', amount:249.00, category:'Tools & Equipment', personal:false, jobId:null, source:'cc-csv', hash:'2026-02-02|249|NORTHERNTOOL2'},
+    {id:'m30', seed:true, date:'2026-02-06', kind:'expense', vendor:'Amazon', desc:'', amount:275.40, category:'Shop Supplies', personal:false, jobId:null, source:'cc-csv', hash:'2026-02-06|275.4|AMAZON2'}
+  ],
+  rules:[
+    {match:'SUMMIT HYDRAULICS', category:'Parts & Materials'},
+    {match:'WELDING GAS', category:'Welding Gas & Supplies'},
+    {match:'SUMMIT MACHINERY', category:'Parts & Materials'},
+    {match:'ACME PARTS', category:'Parts & Materials'},
+    {match:'AUTOZONE', category:'Parts & Materials'},
+    {match:'BORING SUPPLY', category:'Tools & Equipment'},
+    {match:'TOOL', category:'Tools & Equipment'},
+    {match:'LOWES', category:'Shop Supplies'},
+    {match:'HOME DEPOT', category:'Shop Supplies'},
+    {match:'AMAZON', category:'Shop Supplies'},
+    {match:'QUICKBOOKS', category:'Software & Office'},
+    {match:'UPS*', category:'Shipping & Postage'},
+    {match:'FEDERAL BANK', category:'Loan & Lease Payments'},
+    {match:'OVERLIMIT', category:'Bank & Card Fees'},
+    {match:'INTEREST CHARGE', category:'Bank & Card Fees'},
+    {match:'GRILL', category:'Meals'},
+    {match:'TRUCK WASH', category:'Vehicle & Travel'},
+    {match:'FLORIST', category:'Personal'},
+    {match:'TARGET', category:'Personal'}
+  ]
+};
+
+/* ---------- state ---------- */
+let S;
+function load(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(raw){ S = JSON.parse(raw); return; }
+  }catch(e){ console.error('load failed', e); }
+  S = JSON.parse(JSON.stringify(SEED));
+  save();
+}
+function save(){ localStorage.setItem(KEY, JSON.stringify(S)); }
+
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function uid(){ return 'x'+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function today(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function fmt$(n){ const v=Number(n)||0; const s='$'+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); return v<0?'-'+s:s; }
+function fmt$0(n){ const v=Number(n)||0; return '$'+Math.round(v).toLocaleString('en-US'); }
+function fmtDate(iso){ if(!iso) return ''; const [y,m,d]=iso.split('-').map(Number); return m+'/'+d+'/'+y; }
+function monthKey(iso){ return iso ? iso.slice(0,7) : ''; }
+function monthName(key){ const [y,m]=key.split('-').map(Number); return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m-1]+' '+y; }
+function daysSince(iso){ const [y,m,d]=iso.split('-').map(Number); return Math.floor((Date.now()-new Date(y,m-1,d).getTime())/86400000); }
+function cust(id){ return S.customers.find(c=>c.id===id); }
+function job(id){ return S.jobs.find(j=>j.id===id); }
+function jobTotal(j){ return (j.lines||[]).reduce((t,l)=>t+(Number(l.amount)||0),0); }
+function jobLabor(j){ return (j.lines||[]).filter(l=>l.item==='Labor').reduce((t,l)=>t+(Number(l.amount)||0),0); }
+function jobPaid(j){ return (j.payments||[]).reduce((t,p)=>t+(Number(p.amount)||0),0); }
+function jobBalance(j){ return jobTotal(j)-jobPaid(j); }
+function isOverdue(j){ return j.status==='invoiced' && daysSince(j.date) > (j.termsDays||S.settings.defaultTermsDays); }
+function suggestInvoiceNo(dateIso){
+  const d = dateIso || today();
+  const yymm = d.slice(2,4)+d.slice(5,7);
+  let max = 0;
+  S.jobs.forEach(j=>{ const m=(j.invoiceNo||'').match(/^(\d{4})\.(\d+)$/); if(m && m[1]===yymm) max=Math.max(max,Number(m[2])); });
+  return yymm+'.'+String(max+1).padStart(2,'0');
+}
+function applyRules(desc){
+  const u = (desc||'').toUpperCase();
+  for(const r of S.rules){ if(r.match && u.includes(r.match.toUpperCase())) return r.category; }
+  return '';
+}
+/* income for a month across payments + income records */
+function incomeEntries(){
+  const out = [];
+  S.money.forEach(m=>{ if(m.kind==='income') out.push({date:m.date, amount:m.amount, who:m.vendor, desc:m.desc, moneyId:m.id}); });
+  S.jobs.forEach(j=>(j.payments||[]).forEach(p=>{
+    out.push({date:p.date, amount:p.amount, who:(cust(j.customerId)||{}).company||'', desc:'Payment on invoice '+j.invoiceNo+(p.method?' ('+p.method+')':''), jobId:j.id});
+  }));
+  return out.sort((a,b)=>b.date.localeCompare(a.date));
+}
+function toast(msg){
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast._t); toast._t = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+function download(name, text, mime){
+  const blob = new Blob([text], {type: mime||'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+/* CSV parser: handles quotes, embedded commas, doubled quotes */
+function parseCSV(text){
+  const rows=[]; let row=[], field='', inQ=false;
+  for(let i=0;i<text.length;i++){
+    const ch=text[i];
+    if(inQ){
+      if(ch==='"'){ if(text[i+1]==='"'){ field+='"'; i++; } else inQ=false; }
+      else field+=ch;
+    }else{
+      if(ch==='"') inQ=true;
+      else if(ch===','){ row.push(field); field=''; }
+      else if(ch==='\n'||ch==='\r'){
+        if(ch==='\r'&&text[i+1]==='\n') i++;
+        row.push(field); field='';
+        if(row.length>1||row[0]!=='') rows.push(row);
+        row=[];
+      }
+      else field+=ch;
+    }
+  }
+  if(field!==''||row.length){ row.push(field); if(row.length>1||row[0]!=='') rows.push(row); }
+  return rows;
+}
+function usDateToIso(s){
+  const m = (s||'').trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if(!m) return null;
+  return m[3]+'-'+m[1].padStart(2,'0')+'-'+m[2].padStart(2,'0');
+}
+function moneyHash(date, amount, desc){ return date+'|'+Number(amount)+'|'+String(desc||'').slice(0,24); }
+/* ================= views ================= */
+const A = {};
+A.view = 'home';
+A.moneyTab = 'out';
+A.jobFilter = 'all';
+
+A.show = function(v){
+  A.view = v;
+  $$('#tabs button').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
+  render();
+  window.scrollTo(0,0);
+};
+
+function render(){
+  const owed = S.jobs.filter(j=>j.status==='invoiced').reduce((t,j)=>t+jobBalance(j),0);
+  $('#top-owed').textContent = fmt$0(owed);
+  const od = S.jobs.filter(isOverdue).length;
+  const bdg = $('#badge-overdue');
+  bdg.style.display = od? 'grid':'none'; bdg.textContent = od;
+  ({home:renderHome, customers:renderCustomers, jobs:renderJobs, money:renderMoney, settings:renderSettings}[A.view]||renderHome)();
+}
+
+/* ---------- dashboard ---------- */
+function renderHome(){
+  const mk = monthKey(today());
+  const inc = incomeEntries();
+  const collected = inc.filter(e=>monthKey(e.date)===mk).reduce((t,e)=>t+e.amount,0);
+  const spent = S.money.filter(m=>m.kind==='expense' && !m.personal && monthKey(m.date)===mk).reduce((t,m)=>t+m.amount,0);
+  const invoicedMo = S.jobs.filter(j=>monthKey(j.date)===mk && j.status!=='estimate').reduce((t,j)=>t+jobTotal(j),0);
+  const unpaid = S.jobs.filter(j=>j.status==='invoiced').sort((a,b)=>a.date.localeCompare(b.date));
+  const owed = unpaid.reduce((t,j)=>t+jobBalance(j),0);
+  const estimates = S.jobs.filter(j=>j.status==='estimate').length;
+
+  /* last 6 months bars */
+  const months=[]; { const d=new Date(); d.setDate(1);
+    for(let i=5;i>=0;i--){ const t=new Date(d.getFullYear(), d.getMonth()-i, 1);
+      months.push(t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')); } }
+  const bars = months.map(k=>({ k,
+    inn: inc.filter(e=>monthKey(e.date)===k).reduce((t,e)=>t+e.amount,0),
+    out: S.money.filter(m=>m.kind==='expense'&&!m.personal&&monthKey(m.date)===k).reduce((t,m)=>t+m.amount,0) }));
+  const mx = Math.max(1, ...bars.map(b=>Math.max(b.inn,b.out)));
+
+  const needBackup = !S.settings.lastBackup || daysSince(S.settings.lastBackup)>7;
+
+  let h = '';
+  if(!S.settings.welcomed){
+    h += `<div class="banner" style="margin-bottom:18px">
+      <b>Welcome.</b>
+      <span>This is a portfolio demo — loaded with fictional customers and invoices so nothing starts empty.
+      Everything lives on this computer — nothing goes to the internet. This is exactly how it shipped to
+      the real client, with their data swapped out.</span>
+      <button class="btn sm right" onclick="A.dismissWelcome()">Got it</button></div>`;
+  }
+  if(needBackup && S.settings.welcomed){
+    h += `<div class="banner" style="margin-bottom:18px">
+      <b>Back up your data</b><span>It has been a while since your last backup. Takes one click.</span>
+      <button class="btn sm right" onclick="A.backup()">Back up now</button></div>`;
+  }
+
+  h += `<div class="statcards" style="margin-bottom:20px">
+    <div class="stat y"><div class="lbl">Owed to you</div><div class="big-num hv">${fmt$0(owed)}</div>
+      <div class="small muted">${unpaid.length} unpaid invoice${unpaid.length===1?'':'s'}</div></div>
+    <div class="stat g"><div class="lbl">Collected — ${monthName(mk)}</div><div class="big-num pos">${fmt$0(collected)}</div></div>
+    <div class="stat r"><div class="lbl">Spent — ${monthName(mk)}</div><div class="big-num neg">${fmt$0(spent)}</div></div>
+    <div class="stat"><div class="lbl">Invoiced — ${monthName(mk)}</div><div class="big-num">${fmt$0(invoicedMo)}</div>
+      ${estimates?`<div class="small muted">${estimates} estimate${estimates===1?'':'s'} waiting</div>`:''}</div>
+  </div>`;
+
+  h += `<div class="quick" style="margin-bottom:26px">
+    <button onclick="A.editJob()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>New Invoice / Estimate</button>
+    <button onclick="A.addExpense()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>Add a Receipt</button>
+    <button onclick="A.editCustomer()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.9-3.5 3.6-5 7-5s6.1 1.5 7 5"/></svg>New Customer</button>
+    <button onclick="A.startImport()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v4h16v-4"/></svg>Import Bank / Card CSV</button>
+  </div>`;
+
+  h += `<div class="grid g2">`;
+  h += `<div class="panel accent owedlist"><div class="eyebrow">Who owes you</div>`;
+  if(unpaid.length){
+    h += `<table class="tbl" style="margin-top:12px"><thead><tr><th>Invoice</th><th>Customer</th><th class="r">Balance</th><th class="r">Days</th></tr></thead><tbody>`;
+    unpaid.forEach(j=>{
+      const c = cust(j.customerId)||{};
+      const days = daysSince(j.date);
+      h += `<tr class="click" onclick="A.openJob('${j.id}')">
+        <td><span class="plate">${esc(j.invoiceNo)}</span></td>
+        <td>${esc(c.company||'?')}</td>
+        <td class="r money">${fmt$(jobBalance(j))}</td>
+        <td class="r">${isOverdue(j)?`<span class="chip overdue">${days}d over</span>`:days+'d'}</td></tr>`;
+    });
+    h += `</tbody></table>`;
+  } else h += `<p class="muted" style="margin-top:12px">Nothing outstanding. Nice.</p>`;
+  h += `</div>`;
+
+  h += `<div class="panel"><div class="eyebrow">Money in vs out — last 6 months</div>
+    <div class="bars" style="margin-top:14px">` +
+    bars.map(b=>`<div class="bargrp"><div class="pair">
+        <div class="b" title="In ${fmt$0(b.inn)}" style="height:${Math.max(2,Math.round(b.inn/mx*92))}px"></div>
+        <div class="b out" title="Out ${fmt$0(b.out)}" style="height:${Math.max(2,Math.round(b.out/mx*92))}px"></div>
+      </div><div class="m">${monthName(b.k).split(' ')[0]}</div></div>`).join('') +
+    `</div>
+    <div class="row small" style="margin-top:10px"><span class="pos">■ In</span><span class="neg">■ Out</span>
+    <span class="muted right">business only</span></div></div>`;
+  h += `</div>`;
+  $('#main').innerHTML = h;
+}
+
+/* ---------- customers ---------- */
+function renderCustomers(){
+  let h = `<div class="row" style="margin-bottom:20px">
+    <h2 style="font-size:1.7rem">Customers</h2>
+    <button class="btn right" onclick="A.editCustomer()">+ New Customer</button></div>`;
+  if(!S.customers.length){
+    h += `<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.9-3.5 3.6-5 7-5s6.1 1.5 7 5"/></svg>
+      <h3>No customers yet</h3><p>Add your first customer to start writing invoices.</p></div>`;
+  }else{
+    h += `<div class="cust-grid">`;
+    S.customers.forEach(c=>{
+      const jobs = S.jobs.filter(j=>j.customerId===c.id);
+      const owed = jobs.filter(j=>j.status==='invoiced').reduce((t,j)=>t+jobBalance(j),0);
+      h += `<div class="cust">
+        <h3>${esc(c.company)}</h3>
+        ${c.contact?`<div class="contactline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.9-3.5 3.6-5 7-5s6.1 1.5 7 5"/></svg>${esc(c.contact)}</div>`:''}
+        ${c.phone?`<div class="contactline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h5l2 5-2.5 1.5a12 12 0 0 0 5 5L15 13l5 2v5a2 2 0 0 1-2 2A16 16 0 0 1 2 6a2 2 0 0 1 2-2z"/></svg><a href="tel:${esc(c.phone)}">${esc(c.phone)}</a></div>`:''}
+        ${c.email?`<div class="contactline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3 7l9 6 9-6"/></svg><a href="mailto:${esc(c.email)}" style="word-break:break-all">${esc(c.email)}</a></div>`:''}
+        ${(c.machines||[]).length?`<div class="machines">`+c.machines.map(m=>`<div class="mach"><b>${esc(m.make)} ${esc(m.model)}</b><span>s/n ${esc(m.serial)}</span></div>`).join('')+`</div>`:''}
+        <div class="small muted">${jobs.length} job${jobs.length===1?'':'s'}${owed>0?` · <span class="hv">owes ${fmt$0(owed)}</span>`:''}</div>
+        <div class="foot">
+          <button class="btn sm" onclick="A.editJob(null,'${c.id}')">New Job</button>
+          <button class="btn sm ghost" onclick="A.editCustomer('${c.id}')">Edit</button>
+        </div></div>`;
+    });
+    h += `</div>`;
+  }
+  $('#main').innerHTML = h;
+}
+
+/* ---------- jobs ---------- */
+function renderJobs(){
+  const filters = [['all','All'],['estimate','Estimates'],['progress','In progress'],['invoiced','Unpaid'],['paid','Paid']];
+  let h = `<div class="row" style="margin-bottom:16px">
+    <h2 style="font-size:1.7rem">Jobs &amp; Invoices</h2>
+    <button class="btn right" onclick="A.editJob()">+ New Invoice / Estimate</button></div>
+    <div class="row" style="margin-bottom:16px">` +
+    filters.map(([k,lbl])=>`<button class="btn sm ${A.jobFilter===k?'':'ghost'}" onclick="A.jobFilter='${k}';render()">${lbl}</button>`).join('') +
+    `</div>`;
+  let list = S.jobs.slice().sort((a,b)=>b.date.localeCompare(a.date));
+  if(A.jobFilter!=='all') list = list.filter(j=>j.status===A.jobFilter);
+  if(!list.length){
+    h += `<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3h10l2 4v14H5V7z"/><path d="M9 12h6M9 16h6"/></svg>
+      <h3>Nothing here yet</h3><p>Hit "New Invoice / Estimate" to write one. It prints exactly like your current invoices.</p></div>`;
+  }else{
+    h += `<div class="panel" style="padding:6px 14px"><table class="tbl"><thead><tr>
+      <th>Invoice #</th><th>Customer</th><th>Date</th><th class="r">Total</th><th class="r">Balance</th><th>Status</th></tr></thead><tbody>`;
+    list.forEach(j=>{
+      const c = cust(j.customerId)||{};
+      const st = isOverdue(j) ? `<span class="chip overdue">Overdue ${daysSince(j.date)}d</span>` :
+        `<span class="chip ${j.status}">${STATUSES[j.status]||j.status}</span>`;
+      h += `<tr class="click" onclick="A.openJob('${j.id}')">
+        <td><span class="plate">${esc(j.invoiceNo||'—')}</span></td>
+        <td>${esc(c.company||'?')}</td><td>${fmtDate(j.date)}</td>
+        <td class="r money">${fmt$(jobTotal(j))}</td>
+        <td class="r money">${j.status==='paid'?'<span class="pos">$0.00</span>':fmt$(jobBalance(j))}</td>
+        <td>${st}</td></tr>`;
+    });
+    h += `</tbody></table></div>`;
+  }
+  $('#main').innerHTML = h;
+}
+
+/* ---------- money ---------- */
+function renderMoney(){
+  const mk = monthKey(today());
+  const inc = incomeEntries();
+  const collectedMo = inc.filter(e=>monthKey(e.date)===mk).reduce((t,e)=>t+e.amount,0);
+  const spentMo = S.money.filter(m=>m.kind==='expense'&&!m.personal&&monthKey(m.date)===mk).reduce((t,m)=>t+m.amount,0);
+  const yr = today().slice(0,4);
+  const spentYr = S.money.filter(m=>m.kind==='expense'&&!m.personal&&m.date.startsWith(yr)).reduce((t,m)=>t+m.amount,0);
+  const collectedYr = inc.filter(e=>e.date.startsWith(yr)).reduce((t,e)=>t+e.amount,0);
+
+  let h = `<div class="row" style="margin-bottom:16px">
+    <h2 style="font-size:1.7rem">Money</h2>
+    <div class="right row">
+      <button class="btn" onclick="A.addExpense()">+ Add Receipt</button>
+      <button class="btn ghost" onclick="A.startImport()">Import CSV</button>
+      <button class="btn ghost" onclick="A.taxExport()">Tax Export ${yr}</button>
+    </div></div>
+    <div class="statcards" style="margin-bottom:18px">
+      <div class="stat g"><div class="lbl">In — ${monthName(mk)}</div><div class="big-num pos">${fmt$0(collectedMo)}</div></div>
+      <div class="stat r"><div class="lbl">Out — ${monthName(mk)}</div><div class="big-num neg">${fmt$0(spentMo)}</div></div>
+      <div class="stat g"><div class="lbl">In — ${yr} so far</div><div class="big-num pos">${fmt$0(collectedYr)}</div></div>
+      <div class="stat r"><div class="lbl">Out — ${yr} so far</div><div class="big-num neg">${fmt$0(spentYr)}</div></div>
+    </div>
+    <div class="row" style="margin-bottom:14px">
+      <button class="btn sm ${A.moneyTab==='out'?'':'ghost'}" onclick="A.moneyTab='out';render()">Money Out (receipts)</button>
+      <button class="btn sm ${A.moneyTab==='in'?'':'ghost'}" onclick="A.moneyTab='in';render()">Money In (payments)</button>
+      <button class="btn sm ${A.moneyTab==='cats'?'':'ghost'}" onclick="A.moneyTab='cats';render()">By Category</button>
+    </div>`;
+
+  if(A.moneyTab==='out'){
+    const rows = S.money.filter(m=>m.kind==='expense').sort((a,b)=>b.date.localeCompare(a.date));
+    if(!rows.length) h += `<div class="empty"><h3>No receipts yet</h3><p>Add one by hand or import your bank / card CSV.</p></div>`;
+    else{
+      h += `<div class="panel" style="padding:6px 14px"><table class="tbl"><thead><tr>
+        <th>Date</th><th>Vendor</th><th>Category</th><th class="r">Amount</th><th></th></tr></thead><tbody>`;
+      rows.forEach(m=>{
+        h += `<tr><td style="white-space:nowrap">${fmtDate(m.date)}</td>
+          <td><b>${esc(m.vendor)}</b>${m.desc?`<div class="small muted">${esc(m.desc)}</div>`:''}</td>
+          <td>${m.personal?`<span class="chip personal">Personal</span>`:`<span class="chip cat">${esc(m.category||'—')}</span>`}</td>
+          <td class="r money ${m.amount<0?'pos':''}">${fmt$(m.amount)}</td>
+          <td class="r"><button class="iconbtn del" title="Delete" onclick="A.delMoney('${m.id}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M9 7V5h6v2m-8 0l1 13h8l1-13"/></svg></button></td></tr>`;
+      });
+      h += `</tbody></table></div>`;
+    }
+  }else if(A.moneyTab==='in'){
+    if(!inc.length) h += `<div class="empty"><h3>No payments yet</h3><p>Record payments on invoices, or import your bank CSV.</p></div>`;
+    else{
+      h += `<div class="panel" style="padding:6px 14px"><table class="tbl"><thead><tr>
+        <th>Date</th><th>From</th><th>What</th><th class="r">Amount</th><th></th></tr></thead><tbody>`;
+      inc.forEach(e=>{
+        h += `<tr><td style="white-space:nowrap">${fmtDate(e.date)}</td><td><b>${esc(e.who)}</b></td>
+          <td class="muted">${esc(e.desc||'')}</td>
+          <td class="r money pos">${fmt$(e.amount)}</td>
+          <td class="r">${e.moneyId?`<button class="iconbtn del" title="Delete" onclick="A.delMoney('${e.moneyId}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M9 7V5h6v2m-8 0l1 13h8l1-13"/></svg></button>`:
+            `<button class="iconbtn" title="Open invoice" onclick="A.openJob('${e.jobId}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></button>`}</td></tr>`;
+      });
+      h += `</tbody></table></div>`;
+    }
+  }else{
+    const byCat = {};
+    S.money.filter(m=>m.kind==='expense'&&!m.personal&&m.date.startsWith(yr)).forEach(m=>{
+      const c = m.category||'Uncategorized'; byCat[c]=(byCat[c]||0)+m.amount; });
+    const cats = Object.entries(byCat).sort((a,b)=>b[1]-a[1]);
+    const mx = Math.max(1,...cats.map(c=>c[1]));
+    h += `<div class="panel accent"><div class="eyebrow">Business spending by category — ${yr}</div><div style="margin-top:14px">`;
+    if(!cats.length) h += `<p class="muted">Nothing yet this year.</p>`;
+    cats.forEach(([c,v])=>{
+      h += `<div class="row" style="margin-bottom:10px;gap:14px">
+        <div style="width:210px;flex:none">${esc(c)}</div>
+        <div style="flex:1;background:var(--steel-700);height:22px;position:relative">
+          <div style="width:${Math.round(v/mx*100)}%;height:100%;background:var(--hi-vis)"></div></div>
+        <div class="money" style="width:110px;text-align:right;font-weight:700">${fmt$(v)}</div></div>`;
+    });
+    h += `</div></div>`;
+  }
+  $('#main').innerHTML = h;
+}
+
+/* ---------- settings ---------- */
+function renderSettings(){
+  const b = S.settings.business;
+  let h = `<h2 style="font-size:1.7rem;margin-bottom:20px">Settings &amp; Backup</h2><div class="grid g2">`;
+
+  h += `<div class="panel accent"><div class="eyebrow">Back up your data</div>
+    <p class="muted" style="margin:12px 0">Everything lives in this browser on this computer.
+    A backup is one file you can keep on a USB stick or email to yourself.
+    ${S.settings.lastBackup?`Last backup: <b>${fmtDate(S.settings.lastBackup)}</b>`:'<b class="neg">Never backed up.</b>'}</p>
+    <div class="row">
+      <button class="btn" onclick="A.backup()">Back Up Now</button>
+      <button class="btn ghost" onclick="$('#file-restore').click()">Restore From Backup</button>
+    </div></div>`;
+
+  h += `<div class="panel"><div class="eyebrow">Your business info (goes on invoices)</div>
+    <div class="fgrid" style="margin-top:14px">
+      <div><label>Business name</label><input id="set-name" value="${esc(b.name)}"></div>
+      <div><label>Phone</label><input id="set-phone" value="${esc(b.phone)}"></div>
+      <div><label>Address line 1</label><input id="set-addr1" value="${esc(b.addr1)}"></div>
+      <div><label>Address line 2</label><input id="set-addr2" value="${esc(b.addr2)}"></div>
+      <div><label>Email</label><input id="set-email" value="${esc(b.email)}"></div>
+      <div><label>Hourly rate ($)</label><input id="set-rate" type="number" value="${S.settings.defaultRate}"></div>
+      <div><label>Payment due (days)</label><select id="set-terms">
+        <option value="15" ${S.settings.defaultTermsDays===15?'selected':''}>15 days</option>
+        <option value="30" ${S.settings.defaultTermsDays===30?'selected':''}>30 days</option></select></div>
+    </div>
+    <div class="row" style="margin-top:14px"><button class="btn" onclick="A.saveSettings()">Save</button></div></div>`;
+
+  h += `<div class="panel"><div class="eyebrow">Auto-sorting rules for imports</div>
+    <p class="muted small" style="margin:10px 0">When a statement line contains the text on the left, it gets the category on the right.</p>
+    <div id="rules-list">` +
+    S.rules.map((r,i)=>`<div class="row" style="margin-bottom:8px;gap:8px">
+      <input style="flex:1" value="${esc(r.match)}" onchange="S.rules[${i}].match=this.value;save()">
+      <select style="flex:1" onchange="S.rules[${i}].category=this.value;save()">` +
+        CATS.map(c=>`<option ${r.category===c?'selected':''}>${c}</option>`).join('') +
+      `</select>
+      <button class="iconbtn del" onclick="S.rules.splice(${i},1);save();render()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M9 7V5h6v2m-8 0l1 13h8l1-13"/></svg></button></div>`).join('') +
+    `</div>
+    <button class="btn sm ghost" onclick="S.rules.push({match:'',category:'Other'});save();render()">+ Add rule</button></div>`;
+
+  h += `<div class="panel"><div class="eyebrow">Housekeeping</div>
+    <p class="muted small" style="margin:10px 0">The app came loaded with sample history: invented example customers, invoices and transactions, not real records.</p>
+    <div class="row">
+      <button class="btn sm ghost" onclick="A.removeSeed()">Remove loaded sample data</button>
+      <button class="btn sm danger" onclick="A.eraseAll()">Erase everything &amp; start fresh</button>
+    </div>
+    <hr class="sep"><p class="small muted">Anvil Office — portfolio demo by DataMind Consulting, adapted from a
+    real client deliverable. One file, no internet required, no subscription. kenny@datamindbi.com</p></div>`;
+
+  h += `</div>`;
+  $('#main').innerHTML = h;
+}
+/* ================= modals ================= */
+function openModal(html, narrow){
+  $('#modal-root').innerHTML =
+    `<div class="modal-back" onclick="closeModal()"></div>
+     <div class="modal ${narrow?'narrow':''}"><div class="hazard"></div>${html}</div>`;
+  $('#modal-root').classList.add('open');
+}
+function closeModal(){ $('#modal-root').classList.remove('open'); $('#modal-root').innerHTML=''; }
+
+/* ---------- misc actions ---------- */
+A.dismissWelcome = function(){ S.settings.welcomed = true; save(); render(); };
+A.saveSettings = function(){
+  const b = S.settings.business;
+  b.name=$('#set-name').value; b.phone=$('#set-phone').value; b.addr1=$('#set-addr1').value;
+  b.addr2=$('#set-addr2').value; b.email=$('#set-email').value;
+  S.settings.defaultRate = Number($('#set-rate').value)||180;
+  S.settings.defaultTermsDays = Number($('#set-terms').value)||15;
+  save(); toast('Settings saved'); render();
+};
+A.delMoney = function(id){
+  const m = S.money.find(x=>x.id===id); if(!m) return;
+  if(!confirm('Delete this '+(m.kind==='income'?'payment':'receipt')+' — '+m.vendor+' '+fmt$(m.amount)+'?')) return;
+  S.money = S.money.filter(x=>x.id!==id); save(); render(); toast('Deleted');
+};
+A.removeSeed = function(){
+  if(!confirm('Remove the loaded sample customers, invoices and receipts? Anything you added yourself stays.')) return;
+  S.customers = S.customers.filter(c=>!c.seed);
+  S.jobs = S.jobs.filter(j=>!j.seed);
+  S.money = S.money.filter(m=>!m.seed);
+  save(); render(); toast('Sample data removed');
+};
+A.eraseAll = function(){
+  if(!confirm('Erase EVERYTHING and start fresh? Make a backup first if unsure.')) return;
+  if(!confirm('Last check — this cannot be undone. Erase all customers, invoices and receipts?')) return;
+  const s = JSON.parse(JSON.stringify(SEED));
+  s.customers=[]; s.jobs=[]; s.money=[]; s.settings.welcomed=true;
+  S = s; save(); render(); toast('Fresh start');
+};
+
+/* ---------- backup / restore ---------- */
+A.backup = function(){
+  S.settings.lastBackup = today(); save();
+  download('Anvil-Backup-'+today()+'.json', JSON.stringify(S, null, 1), 'application/json');
+  toast('Backup file downloaded'); render();
+};
+function restoreFile(file){
+  const rd = new FileReader();
+  rd.onload = () => {
+    try{
+      const data = JSON.parse(rd.result);
+      if(!data.settings || !Array.isArray(data.jobs)) throw new Error('not an Anvil Office backup');
+      if(!confirm('Replace everything with this backup from '+(data.settings.lastBackup||'unknown date')+'?')) return;
+      S = data; save(); render(); toast('Backup restored');
+    }catch(e){ alert('That file is not a valid Anvil Office backup.'); }
+  };
+  rd.readAsText(file);
+}
+
+/* ================= customer editor ================= */
+A.editCustomer = function(id){
+  const c = id ? JSON.parse(JSON.stringify(cust(id))) : {id:null, company:'', contact:'', phone:'', email:'', address:'', termsDays:null, notes:'', machines:[]};
+  A.draftC = c;
+  renderCustomerModal();
+};
+function renderCustomerModal(){
+  const c = A.draftC;
+  openModal(`
+    <div class="mhead"><h2>${c.id?'Edit customer':'New customer'}</h2></div>
+    <div class="mbody">
+      <div class="fgrid">
+        <div><label>Company / name</label><input id="cf-company" value="${esc(c.company)}"></div>
+        <div><label>Contact person</label><input id="cf-contact" value="${esc(c.contact)}"></div>
+        <div><label>Phone</label><input id="cf-phone" value="${esc(c.phone)}"></div>
+        <div><label>Email</label><input id="cf-email" value="${esc(c.email)}"></div>
+      </div>
+      <div class="frow" style="margin-top:14px"><label>Address (as it should print on the invoice)</label>
+        <textarea id="cf-address" style="min-height:64px">${esc(c.address)}</textarea></div>
+      <div class="frow"><label>Notes</label><input id="cf-notes" value="${esc(c.notes)}"></div>
+      <label style="margin-top:6px">Their machines (shows up when you write a job)</label>
+      <div id="cf-machines">` +
+      c.machines.map((m,i)=>`<div class="machrow">
+        <input placeholder="Make (Acme)" value="${esc(m.make)}" data-mf="make" data-i="${i}">
+        <input placeholder="Model (EX-240)" value="${esc(m.model)}" data-mf="model" data-i="${i}">
+        <input placeholder="Serial #" value="${esc(m.serial)}" data-mf="serial" data-i="${i}">
+        <button class="iconbtn del" onclick="A.rmMachine(${i})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M9 7V5h6v2m-8 0l1 13h8l1-13"/></svg></button>
+      </div>`).join('') +
+      `</div>
+      <button class="btn sm ghost" onclick="A.addMachine()">+ Add machine</button>
+    </div>
+    <div class="mfoot">
+      <button class="btn" onclick="A.saveCustomer()">Save Customer</button>
+      <button class="btn ghost" onclick="closeModal()">Cancel</button>
+      ${c.id?`<button class="btn danger right" onclick="A.delCustomer('${c.id}')">Delete</button>`:''}
+    </div>`);
+}
+function syncCustomerDraft(){
+  const c = A.draftC;
+  c.company=$('#cf-company').value.trim(); c.contact=$('#cf-contact').value.trim();
+  c.phone=$('#cf-phone').value.trim(); c.email=$('#cf-email').value.trim();
+  c.address=$('#cf-address').value; c.notes=$('#cf-notes').value;
+  $$('#cf-machines input').forEach(inp=>{ c.machines[Number(inp.dataset.i)][inp.dataset.mf]=inp.value.trim(); });
+}
+A.addMachine = function(){ syncCustomerDraft(); A.draftC.machines.push({make:'',model:'',serial:''}); renderCustomerModal(); };
+A.rmMachine = function(i){ syncCustomerDraft(); A.draftC.machines.splice(i,1); renderCustomerModal(); };
+A.saveCustomer = function(){
+  syncCustomerDraft();
+  const c = A.draftC;
+  if(!c.company){ alert('Give the customer a name.'); return; }
+  c.machines = c.machines.filter(m=>m.make||m.model||m.serial);
+  if(c.id){ const i = S.customers.findIndex(x=>x.id===c.id); S.customers[i]=c; }
+  else{ c.id = uid(); S.customers.push(c); }
+  save(); closeModal(); render(); toast('Customer saved');
+};
+A.delCustomer = function(id){
+  if(S.jobs.some(j=>j.customerId===id)){ alert('This customer has jobs on file. Delete those first.'); return; }
+  if(!confirm('Delete this customer?')) return;
+  S.customers = S.customers.filter(c=>c.id!==id);
+  save(); closeModal(); render(); toast('Customer deleted');
+};
+
+/* ================= job editor ================= */
+A.editJob = function(id, customerId){
+  let j;
+  if(id){ j = JSON.parse(JSON.stringify(job(id))); }
+  else{
+    const c = customerId ? cust(customerId) : null;
+    j = { id:null, invoiceNo:'', po:'', customerId:customerId||'', date:today(),
+      status:'estimate', termsDays:(c&&c.termsDays)||S.settings.defaultTermsDays,
+      problem:'', location:'', tasks:[''],
+      lines:[{item:'Labor', desc:'', hours:null, rate:S.settings.defaultRate, amount:0}], payments:[] };
+    j.invoiceNo = suggestInvoiceNo(j.date);
+  }
+  A.draftJ = j;
+  renderJobModal();
+}
+function renderJobModal(){
+  const j = A.draftJ;
+  const c = cust(j.customerId);
+  const machChips = c && (c.machines||[]).length ?
+    `<div class="row small" style="margin-top:6px">`+c.machines.map((m,i)=>
+      `<button class="btn sm ghost" onclick="A.insMachine(${i})">+ ${esc(m.make)} ${esc(m.model)} s/n ${esc(m.serial)}</button>`).join('')+`</div>` : '';
+  openModal(`
+    <div class="mhead"><h2>${j.id?'Job '+esc(j.invoiceNo):'New job'}</h2>
+      <span class="chip ${j.status}" style="margin-left:auto">${STATUSES[j.status]}</span></div>
+    <div class="mbody">
+      <div class="fgrid">
+        <div><label>Customer</label><select id="jf-cust" onchange="A.jobCustChanged()">
+          <option value="">— pick customer —</option>` +
+          S.customers.map(x=>`<option value="${x.id}" ${x.id===j.customerId?'selected':''}>${esc(x.company)}</option>`).join('') +
+        `</select></div>
+        <div><label>Date</label><input id="jf-date" type="date" value="${j.date}"></div>
+        <div><label>Invoice #</label><input id="jf-no" value="${esc(j.invoiceNo)}"></div>
+        <div><label>Customer PO # (optional)</label><input id="jf-po" value="${esc(j.po)}"></div>
+        <div><label>Type</label><select id="jf-status">` +
+          Object.entries(STATUSES).map(([k,v])=>`<option value="${k}" ${j.status===k?'selected':''}>${v}</option>`).join('') +
+        `</select></div>
+        <div><label>Payment due</label><select id="jf-terms">
+          <option value="15" ${j.termsDays===15?'selected':''}>15 days</option>
+          <option value="30" ${j.termsDays===30?'selected':''}>30 days</option></select></div>
+      </div>
+      <div class="frow" style="margin-top:14px"><label>Customer description of the problem</label>
+        <textarea id="jf-problem" placeholder="Customer states ...">${esc(j.problem)}</textarea>${machChips}</div>
+      <div class="frow"><label>Where the work happens</label>
+        <input id="jf-location" placeholder="Work performed at ..." value="${esc(j.location)}"></div>
+
+      <label>Work performed (prints as the task list)</label>
+      <div id="jf-tasks">` +
+      j.tasks.map((t,i)=>`<div class="taskrow"><div class="tno">${String(i+1).padStart(2,'0')}</div>
+        <input value="${esc(t)}" data-task="${i}" placeholder="Anvil ...">
+        <button class="iconbtn del" onclick="A.rmTask(${i})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M9 7V5h6v2m-8 0l1 13h8l1-13"/></svg></button></div>`).join('') +
+      `</div>
+      <button class="btn sm ghost" onclick="A.addTask()" style="margin-bottom:18px">+ Add work line</button>
+
+      <label>Billing</label>
+      <div class="linerow" style="margin-bottom:2px">
+        <span class="small muted">ITEM</span><span class="small muted">DESCRIPTION</span>
+        <span class="small muted">HOURS</span><span class="small muted">RATE</span><span class="small muted">AMOUNT</span><span></span></div>
+      <div id="jf-lines">` +
+      j.lines.map((l,i)=>`<div class="linerow">
+        <select data-lf="item" data-i="${i}">` + LINE_ITEMS.map(x=>`<option ${l.item===x?'selected':''}>${x}</option>`).join('') + `</select>
+        <input data-lf="desc" data-i="${i}" value="${esc(l.desc)}">
+        <input data-lf="hours" data-i="${i}" type="number" step="0.5" value="${l.hours==null?'':l.hours}" oninput="A.lineCalc(${i})">
+        <input data-lf="rate" data-i="${i}" type="number" step="5" value="${l.rate==null?'':l.rate}" oninput="A.lineCalc(${i})">
+        <input data-lf="amount" data-i="${i}" type="number" step="0.01" value="${l.amount==null?'':l.amount}" oninput="A.lineTotals()">
+        <button class="iconbtn del" onclick="A.rmLine(${i})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M9 7V5h6v2m-8 0l1 13h8l1-13"/></svg></button>
+      </div>`).join('') +
+      `</div>
+      <button class="btn sm ghost" onclick="A.addLine()">+ Add billing line</button>
+      <div style="margin-top:14px">
+        <div class="totline">Labor <b id="jt-labor">$0.00</b></div>
+        <div class="totline">Non-labor <b id="jt-nonlabor">$0.00</b></div>
+        <div class="totline grand">Total <b id="jt-total">$0.00</b></div>
+      </div>` +
+      (j.id && j.payments && j.payments.length ?
+        `<hr class="sep"><label>Payments received</label>` +
+        j.payments.map((p,i)=>`<div class="row small" style="margin-bottom:6px">
+          <span>${fmtDate(p.date)}</span><b>${fmt$(p.amount)}</b><span class="muted">${esc(p.method||'')}</span>
+          <button class="iconbtn del right" onclick="A.rmPayment(${i})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M9 7V5h6v2m-8 0l1 13h8l1-13"/></svg></button></div>`).join('')
+        : '') +
+    `</div>
+    <div class="mfoot">
+      <button class="btn" onclick="A.saveJob(false)">Save</button>
+      <button class="btn" onclick="A.saveJob(true)">Save &amp; Print</button>
+      ${j.id?`<button class="btn ghost" onclick="A.recordPayment('${j.id}')">Record Payment</button>`:''}
+      <button class="btn ghost" onclick="closeModal()">Cancel</button>
+      ${j.id?`<button class="btn danger right" onclick="A.delJob('${j.id}')">Delete</button>`:''}
+    </div>`);
+  A.lineTotals();
+}
+function syncJobDraft(){
+  const j = A.draftJ;
+  j.customerId=$('#jf-cust').value; j.date=$('#jf-date').value||today();
+  j.invoiceNo=$('#jf-no').value.trim(); j.po=$('#jf-po').value.trim();
+  j.status=$('#jf-status').value; j.termsDays=Number($('#jf-terms').value)||15;
+  j.problem=$('#jf-problem').value; j.location=$('#jf-location').value;
+  j.tasks = $$('#jf-tasks input').map(i=>i.value);
+  $$('#jf-lines [data-lf]').forEach(el=>{
+    const l = j.lines[Number(el.dataset.i)]; const f = el.dataset.lf;
+    if(f==='item'||f==='desc') l[f]=el.value;
+    else l[f] = el.value===''?null:Number(el.value);
+  });
+}
+A.jobCustChanged = function(){
+  syncJobDraft();
+  const c = cust(A.draftJ.customerId);
+  if(c && c.termsDays) A.draftJ.termsDays = c.termsDays;
+  renderJobModal();
+};
+A.insMachine = function(i){
+  syncJobDraft();
+  const c = cust(A.draftJ.customerId); if(!c) return;
+  const m = c.machines[i];
+  const txt = m.make+' '+m.model+' s/n '+m.serial;
+  A.draftJ.problem = (A.draftJ.problem?A.draftJ.problem+' ':'Customer states ') + txt + ' ';
+  renderJobModal();
+};
+A.addTask = function(){ syncJobDraft(); A.draftJ.tasks.push(''); renderJobModal(); };
+A.rmTask = function(i){ syncJobDraft(); A.draftJ.tasks.splice(i,1); renderJobModal(); };
+A.addLine = function(){ syncJobDraft(); A.draftJ.lines.push({item:'Labor',desc:'',hours:null,rate:S.settings.defaultRate,amount:0}); renderJobModal(); };
+A.rmLine = function(i){ syncJobDraft(); A.draftJ.lines.splice(i,1); renderJobModal(); };
+A.lineCalc = function(i){
+  const h = $(`#jf-lines [data-lf="hours"][data-i="${i}"]`).value;
+  const r = $(`#jf-lines [data-lf="rate"][data-i="${i}"]`).value;
+  if(h!=='' && r!==''){ $(`#jf-lines [data-lf="amount"][data-i="${i}"]`).value = (Number(h)*Number(r)).toFixed(2); }
+  A.lineTotals();
+};
+A.lineTotals = function(){
+  let labor=0, non=0;
+  $$('#jf-lines .linerow').forEach(row=>{
+    const item = row.querySelector('[data-lf="item"]').value;
+    const amt = Number(row.querySelector('[data-lf="amount"]').value)||0;
+    if(item==='Labor') labor+=amt; else non+=amt;
+  });
+  $('#jt-labor').textContent = fmt$(labor);
+  $('#jt-nonlabor').textContent = fmt$(non);
+  $('#jt-total').textContent = fmt$(labor+non);
+};
+A.saveJob = function(print){
+  syncJobDraft();
+  const j = A.draftJ;
+  if(!j.customerId){ alert('Pick a customer first.'); return; }
+  if(!j.invoiceNo) j.invoiceNo = suggestInvoiceNo(j.date);
+  j.tasks = j.tasks.filter(t=>t.trim());
+  j.lines = j.lines.filter(l=>l.desc || l.amount);
+  j.lines.forEach(l=>{ if(l.hours!=null && l.rate!=null && (l.amount==null||l.amount===0)) l.amount=l.hours*l.rate; });
+  if(j.id){ const i = S.jobs.findIndex(x=>x.id===j.id); S.jobs[i]=j; }
+  else{ j.id = uid(); S.jobs.push(j); }
+  save(); closeModal(); render(); toast(j.status==='estimate'?'Estimate saved':'Invoice saved');
+  if(print) A.printJob(j.id);
+};
+A.openJob = function(id){ A.editJob(id); };
+A.delJob = function(id){
+  if(!confirm('Delete this job/invoice entirely?')) return;
+  S.jobs = S.jobs.filter(j=>j.id!==id);
+  save(); closeModal(); render(); toast('Job deleted');
+};
+A.rmPayment = function(i){
+  syncJobDraft();
+  A.draftJ.payments.splice(i,1);
+  if(A.draftJ.status==='paid') A.draftJ.status='invoiced';
+  renderJobModal();
+};
+A.recordPayment = function(id){
+  syncJobDraft();
+  const j = A.draftJ;
+  const bal = jobBalance(j);
+  openModal(`
+    <div class="mhead"><h2>Record payment — ${esc(j.invoiceNo)}</h2></div>
+    <div class="mbody">
+      <p class="muted" style="margin-bottom:14px">Balance owed: <b class="hv">${fmt$(bal)}</b></p>
+      <div class="fgrid">
+        <div><label>Date received</label><input id="pf-date" type="date" value="${today()}"></div>
+        <div><label>Amount</label><input id="pf-amount" type="number" step="0.01" value="${bal>0?bal.toFixed(2):''}"></div>
+        <div><label>How</label><select id="pf-method"><option>Check</option><option>ACH</option><option>Cash</option><option>Card</option><option>Other</option></select></div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn" onclick="A.savePayment('${id}')">Save Payment</button>
+      <button class="btn ghost" onclick="renderJobModal()">Back</button>
+    </div>`, true);
+};
+A.savePayment = function(id){
+  const amt = Number($('#pf-amount').value);
+  if(!amt){ alert('Enter the amount received.'); return; }
+  const j = A.draftJ;
+  j.payments = j.payments||[];
+  j.payments.push({date:$('#pf-date').value||today(), amount:amt, method:$('#pf-method').value});
+  if(jobBalance(j) <= 0.005) j.status = 'paid';
+  const i = S.jobs.findIndex(x=>x.id===j.id);
+  if(i>=0) S.jobs[i]=j;
+  save(); closeModal(); render();
+  toast(j.status==='paid' ? 'Paid in full — nice!' : 'Payment recorded');
+};
+
+/* ================= print ================= */
+A.printJob = function(id){
+  const j = job(id); if(!j) return;
+  const c = cust(j.customerId)||{};
+  const b = S.settings.business;
+  const title = j.status==='estimate' ? 'Estimate' : 'Invoice';
+  const labor = jobLabor(j), total = jobTotal(j), non = total-labor;
+  const addr = (c.address||'').split('\n').map(esc).join('<br>');
+  $('#print-root').innerHTML = `<div class="inv">
+    <div class="inv-top">
+      <div><h1>${title}</h1></div>
+      <div class="meta">
+        <div><b>${title} #:</b> ${esc(j.invoiceNo)}</div>
+        ${j.po?`<div><b>PO #:</b> ${esc(j.po)}</div>`:''}
+        <div><b>Date:</b> ${fmtDate(j.date)}</div>
+      </div>
+    </div>
+    <div class="parties">
+      <div class="party">
+        <div class="pname">${esc(b.name)}</div>
+        ${esc(b.addr1)}<br>${esc(b.addr2)}<br>${esc(b.phone)}<br>${esc(b.email)}
+      </div>
+      <div class="party" style="text-align:right">
+        <div class="plabel">Prepared for</div>
+        <div class="pname">${esc(c.company||'')}</div>
+        ${addr?addr+'<br>':''}
+        ${c.contact?'Attention: '+esc(c.contact)+(c.phone?' '+esc(c.phone):'')+'<br>':''}
+        ${c.email?esc(c.email):''}
+      </div>
+    </div>
+    <div class="sechead">Customer description of the problem</div>
+    <p class="desc">${esc(j.problem)}</p>
+    ${j.location?`<p class="desc">${esc(j.location)}</p>`:''}
+    ${j.tasks.length?`<div class="sechead">Description of work performed</div>
+    <table><thead><tr><th style="width:12mm">Task</th><th>Description</th></tr></thead><tbody>` +
+      j.tasks.map((t,i)=>`<tr><td class="tasknum">${String(i+1).padStart(2,'0')}</td><td>${esc(t)}</td></tr>`).join('') +
+    `</tbody></table>`:''}
+    <div class="sechead">Charges</div>
+    <table><thead><tr><th style="width:26mm">Item</th><th>Description</th>
+      <th class="r" style="width:16mm">Hours</th><th class="r" style="width:18mm">Rate</th><th class="r" style="width:24mm">Amount</th></tr></thead><tbody>` +
+      j.lines.map(l=>`<tr><td>${esc(l.item)}</td><td>${esc(l.desc)}</td>
+        <td class="r">${l.hours==null?'':l.hours}</td>
+        <td class="r">${l.rate==null?'':fmt$(l.rate)}</td>
+        <td class="r">${fmt$(l.amount||0)}</td></tr>`).join('') +
+    `</tbody></table>
+    <div class="totals">
+      <div class="trow"><span>Labor</span><span>${fmt$(labor)}</span></div>
+      <div class="trow"><span>Non-labor</span><span>${fmt$(non)}</span></div>
+      <div class="trow grand"><span>Total</span><span>${fmt$(total)}</span></div>
+    </div>
+    <div class="terms"><b>Terms and Conditions:</b><ol>
+      <li>All fees must be paid within ${j.termsDays||S.settings.defaultTermsDays} calendar days after completion of Anvil's work.</li>
+      <li>Please make payment by check or ACH to: ${esc(b.name)}.</li>
+      <li>If either party should default upon the terms of this agreement, the non-defaulting party shall be entitled to recover its reasonable attorney's fee in addition to any other relief to which it may be entitled.</li>
+    </ol></div>
+    <div class="inv-foot">${esc(b.name)} — Precision machining, wherever the job is — ${esc(b.phone)}</div>
+    <div class="footstripe"></div>
+  </div>`;
+  window.print();
+};
+
+/* ================= expense quick add ================= */
+A.addExpense = function(){
+  openModal(`
+    <div class="mhead"><h2>Add a receipt</h2></div>
+    <div class="mbody">
+      <div class="fgrid">
+        <div><label>Date</label><input id="ef-date" type="date" value="${today()}"></div>
+        <div><label>Who you paid</label><input id="ef-vendor" placeholder="Summit Machinery" onblur="A.expenseRuleHint()"></div>
+        <div><label>Amount ($)</label><input id="ef-amount" type="number" step="0.01" placeholder="0.00"></div>
+        <div><label>Category</label><select id="ef-cat">` +
+          CATS.map(c=>`<option>${c}</option>`).join('') + `</select></div>
+      </div>
+      <div class="frow" style="margin-top:14px"><label>Note (optional)</label><input id="ef-desc" placeholder="hydraulic hose for EX-240 job"></div>
+      <div class="row"><label style="margin:0;display:flex;align-items:center;gap:10px;text-transform:none;font-family:var(--body);font-size:1rem;color:var(--paper)">
+        <input type="checkbox" id="ef-personal" style="width:22px;height:22px"> This one was personal, not business</label></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn" onclick="A.saveExpense()">Save Receipt</button>
+      <button class="btn ghost" onclick="closeModal()">Cancel</button>
+    </div>`, true);
+};
+A.expenseRuleHint = function(){
+  const cat = applyRules($('#ef-vendor').value);
+  if(cat) $('#ef-cat').value = cat;
+};
+A.saveExpense = function(){
+  const amt = Number($('#ef-amount').value);
+  const vendor = $('#ef-vendor').value.trim();
+  if(!vendor || !amt){ alert('Need at least who you paid and the amount.'); return; }
+  const cat = $('#ef-cat').value;
+  const personal = $('#ef-personal').checked || cat==='Personal';
+  const date = $('#ef-date').value||today();
+  S.money.push({ id:uid(), date, kind:'expense', vendor, desc:$('#ef-desc').value.trim(),
+    amount:amt, category:cat, personal, jobId:null, source:'manual', hash:moneyHash(date,amt,vendor) });
+  save(); closeModal(); A.moneyTab='out'; if(A.view!=='money') A.show('money'); else render();
+  toast('Receipt saved');
+};
+
+/* ================= CSV import ================= */
+A.startImport = function(){ $('#file-csv').value=''; $('#file-csv').click(); };
+function classifyBankRow(desc, debit, credit){
+  const u = desc.toUpperCase();
+  if(credit>0){
+    if(u.includes('CONTINENTAL FLEET')) return {kind:'income', include:true, vendor:'Continental Fleet Services', note:'EDI payment'};
+    if(u.includes('DEPOSIT')) return {kind:'income', include:true, vendor:'Deposit', note:desc};
+    return {kind:'income', include:true, vendor:desc, note:''};
+  }
+  const transfers = ['CREDIT CARD PMT',' TO:','MOBILE CHECK','TRANSFER TO SAVINGS','RETIREMENT CONTRIB','MORTGAGE PMT','TAXES','CASH ','AUTO LOAN PMT','INSURANCES'];
+  if(transfers.some(t=>u.includes(t))) return {kind:'expense', include:false, vendor:desc, note:'transfer / personal — skipped'};
+  return {kind:'expense', include:true, vendor:desc, note:''};
+}
+function buildImportRows(rows){
+  const head = rows[0].map(h=>h.trim().toLowerCase());
+  const out = [];
+  if(head.includes('post date') && head.includes('debit')){
+    // Bank AccountHistory format
+    const ix = {date:head.indexOf('post date'), desc:head.indexOf('description'), debit:head.indexOf('debit'), credit:head.indexOf('credit')};
+    rows.slice(1).forEach(r=>{
+      const date = usDateToIso(r[ix.date]); if(!date) return;
+      const debit = Number(r[ix.debit])||0, credit = Number(r[ix.credit])||0;
+      const desc = (r[ix.desc]||'').trim();
+      const cls = classifyBankRow(desc, debit, credit);
+      const amount = cls.kind==='income' ? credit : debit;
+      if(!amount) return;
+      out.push({ date, desc, amount, kind:cls.kind, include:cls.include, reason:cls.note,
+        vendor:cls.kind==='income'?cls.vendor:desc, category:applyRules(desc)||'Other', source:'bank-csv' });
+    });
+    return {fmt:'Bank account history', rows:out};
+  }
+  if(head.includes('transaction') && head.includes('memo')){
+    // Credit card format
+    const ix = {date:head.indexOf('date'), tx:head.indexOf('transaction'), name:head.indexOf('name'), memo:head.indexOf('memo'), amt:head.indexOf('amount')};
+    rows.slice(1).forEach(r=>{
+      const date = (r[ix.date]||'').trim(); if(!/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
+      const raw = Number(r[ix.amt])||0;
+      const name = (r[ix.name]||'').trim().replace(/\s+/g,' ');
+      if(r[ix.tx]==='CREDIT'){
+        if(name.toUpperCase().includes('PAYMENT'))
+          out.push({date, desc:name, amount:raw, kind:'expense', include:false, reason:'card payment — skipped', vendor:name, category:'Other', source:'cc-csv'});
+        else
+          out.push({date, desc:name+' (refund)', amount:-Math.abs(raw), kind:'expense', include:true, reason:'refund', vendor:name, category:applyRules(name)||'Other', source:'cc-csv'});
+        return;
+      }
+      const cat = applyRules(name)||'Other';
+      out.push({ date, desc:name, amount:Math.abs(raw), kind:'expense', include:true, reason:'',
+        vendor:name, category:cat, source:'cc-csv' });
+    });
+    return {fmt:'Credit card statement', rows:out};
+  }
+  return null;
+}
+function importFile(file){
+  const rd = new FileReader();
+  rd.onload = () => {
+    const parsed = parseCSV(String(rd.result));
+    if(!parsed.length){ alert('Could not read that file.'); return; }
+    const built = buildImportRows(parsed);
+    if(!built){ alert('That does not look like your bank or credit-card CSV.\nExpected the account history or card statement download.'); return; }
+    built.rows.forEach(r=>{
+      r.hash = moneyHash(r.date, r.amount, r.desc);
+      r.dupe = S.money.some(m=>m.hash===r.hash ||
+        (m.date===r.date && m.kind===r.kind && Math.abs(Number(m.amount)-Number(r.amount))<0.005));
+      if(r.dupe) r.include = false;
+      if(r.kind==='income' && !r.reason && !r.dupe) r.reason = 'skip this if you already recorded it on an invoice';
+      if(r.category==='Personal'){ r.personal = true; } else r.personal = false;
+    });
+    A.imp = built;
+    renderImportModal();
+  };
+  rd.readAsText(file);
+}
+function renderImportModal(){
+  const {fmt, rows} = A.imp;
+  const nSel = rows.filter(r=>r.include).length;
+  openModal(`
+    <div class="mhead"><h2>Import — ${esc(fmt)}</h2></div>
+    <div class="mbody">
+      <p class="muted small" style="margin-bottom:12px">Check what to bring in. Transfers, card payments and things you already imported are unchecked automatically.</p>
+      <table class="tbl"><thead><tr><th></th><th>Date</th><th>What</th><th>Category</th><th class="r">Amount</th></tr></thead><tbody>` +
+      rows.map((r,i)=>`<tr class="${r.include?'':'imp-row-off'}">
+        <td><input type="checkbox" style="width:20px;height:20px" ${r.include?'checked':''} onchange="A.imp.rows[${i}].include=this.checked;renderImportModal()"></td>
+        <td style="white-space:nowrap">${fmtDate(r.date)}</td>
+        <td>${esc(r.desc.slice(0,46))}${r.reason?`<div class="imp-reason">${esc(r.reason)}</div>`:''}${r.dupe?`<div class="dupe">already imported</div>`:''}</td>
+        <td>${r.kind==='income'?'<span class="chip cat">Money in</span>':
+          `<select style="padding:6px 30px 6px 8px;font-size:.86rem" onchange="A.imp.rows[${i}].category=this.value">` +
+          CATS.map(c=>`<option ${r.category===c?'selected':''}>${c}</option>`).join('') + `</select>`}</td>
+        <td class="r money ${r.kind==='income'?'pos':''}">${fmt$(r.amount)}</td></tr>`).join('') +
+      `</tbody></table>
+    </div>
+    <div class="mfoot">
+      <button class="btn" onclick="A.commitImport()">Import ${nSel} item${nSel===1?'':'s'}</button>
+      <button class="btn ghost" onclick="closeModal()">Cancel</button>
+    </div>`);
+}
+A.commitImport = function(){
+  let n=0;
+  A.imp.rows.forEach(r=>{
+    if(!r.include) return;
+    S.money.push({ id:uid(), date:r.date, kind:r.kind, vendor:r.vendor, desc:r.kind==='income'?r.desc:'',
+      amount:r.amount, category:r.kind==='income'?'':r.category,
+      personal:r.category==='Personal', jobId:null, source:r.source, hash:r.hash });
+    n++;
+  });
+  save(); closeModal(); A.moneyTab='out'; if(A.view!=='money') A.show('money'); else render();
+  toast(n+' item'+(n===1?'':'s')+' imported');
+};
+
+/* ================= tax export ================= */
+A.taxExport = function(){
+  const yr = today().slice(0,4);
+  const esc2 = v => '"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+  let csv = 'Type,Date,Vendor/Customer,Description,Category,Amount\n';
+  incomeEntries().filter(e=>e.date.startsWith(yr)).slice().reverse().forEach(e=>{
+    csv += ['Income', e.date, esc2(e.who), esc2(e.desc), '', e.amount.toFixed(2)].join(',')+'\n'; });
+  S.money.filter(m=>m.kind==='expense' && !m.personal && m.date.startsWith(yr))
+    .sort((a,b)=>a.date.localeCompare(b.date)).forEach(m=>{
+      csv += ['Expense', m.date, esc2(m.vendor), esc2(m.desc), esc2(m.category), (-m.amount).toFixed(2)].join(',')+'\n'; });
+  download('Anvil-Tax-Export-'+yr+'.csv', csv, 'text/csv');
+  toast('Tax export downloaded');
+};
+
+/* ================= boot ================= */
+document.addEventListener('DOMContentLoaded', () => {
+  load();
+  $('#file-csv').addEventListener('change', e=>{ if(e.target.files[0]) importFile(e.target.files[0]); });
+  $('#file-restore').addEventListener('change', e=>{ if(e.target.files[0]) restoreFile(e.target.files[0]); e.target.value=''; });
+  A.show('home');
+});
+</script>
+</body>
+</html>

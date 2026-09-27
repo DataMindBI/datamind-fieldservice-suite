@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anvil Office — Owner's Guide</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpolygon points='16,1 30,8.5 30,23.5 16,31 2,23.5 2,8.5' fill='%23ffcb05'/%3E%3Ctext x='16' y='22' font-family='Arial Black,Arial' font-size='16' font-weight='900' text-anchor='middle' fill='%2315171a'%3EA%3C/text%3E%3C/svg%3E">
+<style>
+  :root{--steel:#15171a;--hi-vis:#ffcb05}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Barlow','Segoe UI',sans-serif;color:#1d2024;background:#fff;line-height:1.55;
+    max-width:760px;margin:0 auto;padding:34px 26px;font-size:1.06rem}
+  h1,h2{font-family:'Oswald','Bahnschrift','Arial Narrow',sans-serif;text-transform:uppercase;letter-spacing:.02em}
+  h1{font-size:2.2rem}
+  h1::after{content:'';display:block;width:120px;height:8px;background:var(--hi-vis);margin-top:8px}
+  h2{font-size:1.25rem;margin:30px 0 10px;display:flex;align-items:center;gap:10px}
+  h2::before{content:'';width:12px;height:12px;background:var(--hi-vis);flex:none}
+  p,li{margin-bottom:8px}
+  ol{margin-left:24px}
+  ol li{padding-left:4px}
+  .stripe{height:8px;background:repeating-linear-gradient(45deg,var(--hi-vis) 0 22px,var(--steel) 22px 44px);margin:22px 0}
+  .box{border:2px solid var(--steel);padding:14px 18px;margin:12px 0}
+  .box.warn{border-color:var(--hi-vis);background:#fffbe8}
+  b.k{background:var(--steel);color:#fff;font-family:'Oswald','Arial Narrow',sans-serif;padding:1px 8px;white-space:nowrap}
+  @media print{ body{padding:0;font-size:10.5pt} }
+</style>
+</head>
+<body>
+<h1>Anvil Office — How to use it</h1>
+<p style="margin-top:12px">Made for <b>Anvil Mobile Machining</b> (portfolio demo — this is the same guide
+handed to the real client, with their name swapped out). One file, no passwords, no monthly fees,
+no internet needed. Your information stays on your computer.</p>
+
+<h2>Opening it</h2>
+<p>Double-click <b class="k">Anvil-Office.html</b>. It opens in your web browser like a website,
+but it is not on the internet — it is yours. Bookmark it or pin it to your taskbar.</p>
+<div class="box warn"><b>Important:</b> always open it from the same place (same file, same computer),
+or your saved work won't show up. If you need to move it, make a backup first (see below) and restore it after.</div>
+
+<h2>Write an invoice (or estimate)</h2>
+<ol>
+  <li>Hit <b class="k">NEW INVOICE / ESTIMATE</b> on the Home screen.</li>
+  <li>Pick the customer. The invoice number fills itself in (your usual numbering).</li>
+  <li>Type what the customer said the problem was, and where the work happens.
+      The buttons under the problem box drop in their machine's serial number for you.</li>
+  <li>Add a line for each thing you did (these print as the numbered task list).</li>
+  <li>Add the charges — put in hours and rate and it does the math.</li>
+  <li>Hit <b class="k">SAVE &amp; PRINT</b>. In the print window choose <b>Save as PDF</b> to email it,
+      or print it on paper. It looks just like your old invoices.</li>
+</ol>
+<p>Start it as an <b>Estimate</b> and it prints with the word "Estimate" on it. When the customer says go,
+open it and switch it to <b>Invoiced</b> — same paper, now it says Invoice.</p>
+
+<h2>When a check comes in</h2>
+<ol>
+  <li>Open <b class="k">JOBS &amp; INVOICES</b>, tap the invoice.</li>
+  <li>Hit <b class="k">RECORD PAYMENT</b>, put in the amount. Paid in full marks it PAID by itself.</li>
+</ol>
+<p>The Home screen always shows <b>who owes you</b> and how many days it's been. Red means past due.</p>
+
+<h2>Receipts</h2>
+<p>Bought welding gas, parts, tools? Hit <b class="k">ADD A RECEIPT</b>, type who, how much, done.
+It sorts itself into the right category for taxes.</p>
+
+<h2>Once a month — statements</h2>
+<ol>
+  <li>Download your bank and credit-card statements as <b>CSV</b> (same downloads you already do).</li>
+  <li>Hit <b class="k">IMPORT BANK / CARD CSV</b> and pick the file.</li>
+  <li>It shows you every line first. Card payments, transfers, and things you already brought in are
+      unchecked automatically. Uncheck anything personal, then hit Import.</li>
+</ol>
+
+<h2>Tax time</h2>
+<p>On the Money screen hit <b class="k">TAX EXPORT</b>. It makes one spreadsheet file with the year's
+business income and expenses by category. Hand that to your tax person. Done.</p>
+
+<div class="stripe"></div>
+<h2>Back it up — once a week</h2>
+<p>Go to <b class="k">SETTINGS</b>, hit <b class="k">BACK UP NOW</b>. It saves one file
+(Anvil-Backup-<i>date</i>.json) into your Downloads. Keep it on a USB stick or email it to yourself.</p>
+<div class="box">New computer, or something went wrong? Open Anvil Office there, go to Settings,
+hit <b class="k">RESTORE FROM BACKUP</b>, pick your newest backup file. Everything comes back.</div>
+
+<h2>Questions</h2>
+<p>Kenny Bush — DataMind Consulting — <b>kenny@datamindbi.com</b></p>
+</body>
+</html>

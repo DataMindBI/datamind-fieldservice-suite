@@ -1,0 +1,45 @@
+# .github/workflows/gitleaks.yml
+# ---------------------------------------------------------------------------
+# Secret-scanning gate for a PUBLIC DataMindBI repo.
+# Scans the FULL git history for committed secrets on every push to main, every
+# pull request, weekly, and on demand. The job FAILS if a secret is found, so a
+# leak blocks the PR check (and the weekly run catches anything that slipped in).
+#
+# LICENSE NOTE: gitleaks-action is free for PUBLIC repositories (all five repos
+# here are public). It is NOT free for an organization scanning PRIVATE repos.
+# Do not drop this file into a private repo without a GITLEAKS_LICENSE secret —
+# use gitleaks-binary.yml (license-free) for that case instead.
+# ---------------------------------------------------------------------------
+name: gitleaks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:            # lets you run it by hand from the Actions tab
+  schedule:
+    - cron: '0 12 * * 1'        # Mondays 12:00 UTC — weekly safety-net scan
+
+permissions:
+  contents: read               # least privilege; the action only needs to read the repo
+
+concurrency:                   # a newer push cancels an in-flight run on the same ref
+  group: gitleaks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gitleaks:
+    name: Scan full history for secrets
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0        # 0 = ALL commits; required to scan history, not just HEAD
+
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}          # provided automatically; enables PR annotations
+          # GITLEAKS_ENABLE_SUMMARY: "true"                  # job-summary table (default: true)
+          # GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }} # ONLY if ever reused on a private org repo
